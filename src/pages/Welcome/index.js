@@ -21,17 +21,10 @@ const Welcome = () => (
         style={styles.input}
         autoCapitalize="none"
         autoCorrect={false}
-        placeholder="Senha"
+        placeholder="Digite seu usuário"
         underlineColorAndroid="transparent"
       />
-      <TextInput
-        style={[styles.input, { marginTop: 10 }]}
-        autoCapitalize="none"
-        autoCorrect={false}
-        placeholder="Confirmação Senha"
-        underlineColorAndroid="transparent"
-      />
-
+    
       <TouchableOpacity style={styles.button} onPress={() => {}}>
         <Text style={styles.buttonText}>Alterar</Text>
       </TouchableOpacity>
