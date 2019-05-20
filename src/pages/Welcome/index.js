@@ -8,12 +8,19 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import styles from './styles';
 import { colors } from '../../styles';
 
 export default class Welcome extends Component {
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
+  };
+
   state = {
     username: '',
     loading: false,
@@ -40,7 +47,7 @@ export default class Welcome extends Component {
       await this.checkUserExist(username);
       await this.saveUser(username);
 
-      navigation.navigate('Repositores');
+      navigation.navigate('User');
     } catch (err) {
       this.setState({ loading: false, error: true });
     }
