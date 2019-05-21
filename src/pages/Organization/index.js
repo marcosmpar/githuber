@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-import { View } from 'react-native';
+import { View, ActivityIndicator, FlatList } from 'react-native';
 
 import PropTypes from 'prop-types';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import AsyncStorage from '@react-native-community/async-storage';
+
 import Header from '../../components/Header';
 
-// import { Container } from './styles';
+import OrganizationItem from './OrganizationItem';
 
-const Organization = () => (
-  <View>
-    <Header title="Organizações" />
-  </View>
-);
+import api from '../../services/api';
+
+import styles from './styles';
 
 const TabIcon = ({ tintColor }) => <Icon name="building" size={20} color={tintColor} />;
 
@@ -22,8 +22,55 @@ TabIcon.propTypes = {
   tintColor: PropTypes.string.isRequired,
 };
 
-Organization.navigationOptions = {
-  tabBarIcon: TabIcon,
-};
+export default class Organization extends Component {
+  static navigationOptions = {
+    tabBarIcon: TabIcon,
+  };
 
-export default Organization;
+  state = {
+    data: [],
+    loading: true,
+    refreshing: false,
+  };
+
+  componentDidMount() {
+    this.loadinOrganization();
+  }
+
+  loadinOrganization = async () => {
+    this.setState({ refreshing: true });
+
+    const username = await AsyncStorage.getItem('@Githuber:username');
+    const { data } = await api.get(`/users/${username}/orgs`);
+
+    this.setState({ data, loading: false, refreshing: false });
+  };
+
+  renderListItem = ({ item }) => <OrganizationItem organization={item} />;
+
+  renderList = () => {
+    const { data, refreshing } = this.state;
+
+    return (
+      <FlatList
+        data={data}
+        keyExtractor={item => String(item.id)}
+        renderItem={this.renderListItem}
+        onRefresh={this.loadinOrganization}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
+        refreshing={refreshing}
+      />
+    );
+  };
+
+  render() {
+    const { loading } = this.state;
+    return (
+      <View style={styles.container}>
+        <Header title="Organizações" />
+        {loading ? <ActivityIndicator style={styles.loading} /> : this.renderList()}
+      </View>
+    );
+  }
+}

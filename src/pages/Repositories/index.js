@@ -5,7 +5,9 @@ import { View, ActivityIndicator, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import AsyncStorage from '@react-native-community/async-storage';
+
 import api from '../../services/api';
 
 import RepositoryItem from './RepositoryItem';
