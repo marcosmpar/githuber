@@ -4,8 +4,9 @@ import { colors, metrics } from '../../styles';
 
 const styles = StyleSheet.create({
   container: {
-    height: 54 + getStatusBarHeight(),
-    paddingTop: getStatusBarHeight(),
+    backgroundColor: colors.white,
+    height: 34 + getStatusBarHeight(),
+    // paddingTop: getStatusBarHeight(),
     borderBottomWidth: 1,
     borderBottomColor: colors.light,
     flexDirection: 'row',

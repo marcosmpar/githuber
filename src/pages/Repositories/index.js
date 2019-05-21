@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, FlatList } from 'react-native';
 
 import PropTypes from 'prop-types';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import api from '../../services/api';
+
+import RepositoryItem from './RepositoryItem';
 
 import Header from '../../components/Header';
 
@@ -26,21 +28,42 @@ export default class Repositories extends Component {
   state = {
     data: [],
     loading: true,
+    refreshing: false,
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.loadinRepositories();
+  }
+
+  loadinRepositories = async () => {
+    this.setState({ refreshing: true });
+
     const username = await AsyncStorage.getItem('@Githuber:username');
     const { data } = await api.get(`/users/${username}/repos`);
 
-    this.setState({ data, loading: false });
-  }
+    this.setState({ data, loading: false, refreshing: false });
+  };
 
-  renderList = () => <Text>Lista</Text>;
+  renderListItem = ({ item }) => <RepositoryItem repository={item} />;
+
+  renderList = () => {
+    const { data, refreshing } = this.state;
+
+    return (
+      <FlatList
+        data={data}
+        keyExtractor={item => String(item.id)}
+        renderItem={this.renderListItem}
+        onRefresh={this.loadinRepositories}
+        refreshing={refreshing}
+      />
+    );
+  };
 
   render() {
     const { loading } = this.state;
     return (
-      <View>
+      <View style={styles.container}>
         <Header title="Repositórios" />
         {loading ? <ActivityIndicator style={styles.loading} /> : this.renderList()}
       </View>
